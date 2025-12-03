@@ -8,3 +8,7 @@ edition = "2024"
 [[bin]]
 name = "puzzle1"
 path = "src/Puzzle1.rs"
+
+[[bin]]
+name = "puzzle2"
+path = "src/Puzzle2.rs"

@@ -15,6 +15,8 @@ fn main() -> io::Result<()> {
     // Create accumulator and counter
     let mut acc : i16 = 50;
     let mut cnt : i16 = 0;
+
+    let mut prev : i16 = 0;
     
     // Iterate over lines in the file
     for line in reader.lines() {
@@ -29,17 +31,25 @@ fn main() -> io::Result<()> {
                     _ => {},
                 }
                 
-                acc = (acc + value).rem_euclid(100);
+                acc = (acc + value);
+
+                if acc < 0  && prev > 0 {
+                    cnt = cnt + 1;
+                }
 
                 if acc == 0 {
                     cnt = cnt + 1;
                 }
+
+                cnt = cnt + (acc / 100).abs();
+                acc = acc.rem_euclid(100);
+                prev = acc;
             },
             Err(e) => eprintln!("Error reading line: {}", e),
         }
     }
 
-    println!("Result: {}", cnt);    // 1066
+    println!("CLICK Password: {}", cnt);    // 6223
 
     Ok(())
 }
