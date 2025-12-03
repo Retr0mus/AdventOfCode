@@ -4,7 +4,7 @@ use std::path::Path;
 
 fn main() -> io::Result<()> {
     // Specify the path to your file
-    let path = Path::new("data/input.txt"); // Ensure this file exists in your project directory
+    let path = Path::new("data/day1.txt"); // Ensure this file exists in your project directory
     
     // Open the file
     let file = File::open(path)?;
@@ -15,7 +15,6 @@ fn main() -> io::Result<()> {
     // Create accumulator and counter
     let mut acc : i16 = 50;
     let mut cnt : i16 = 0;
-
     let mut prev : i16 = 0;
     
     // Iterate over lines in the file
@@ -31,7 +30,7 @@ fn main() -> io::Result<()> {
                     _ => {},
                 }
                 
-                acc = (acc + value);
+                acc += value;
 
                 if acc < 0  && prev > 0 {
                     cnt = cnt + 1;
@@ -41,7 +40,7 @@ fn main() -> io::Result<()> {
                     cnt = cnt + 1;
                 }
 
-                cnt = cnt + (acc / 100).abs();
+                cnt += (acc / 100).abs();
                 acc = acc.rem_euclid(100);
                 prev = acc;
             },
