@@ -13,14 +13,16 @@ enum State {
 
 struct StateMachine {
     current_state : State,
-    paths : HashSet<Vec<u8>>,
+    positions : HashSet<u8>,
+    tachyons : Vec<u64>,
 }
 
 impl StateMachine {
     fn new() -> Self {
         StateMachine {
             current_state: State::SourceExtraction,
-            paths: HashSet::new(),
+            positions: HashSet::new(),
+            tachyons: Vec::new(),
         }
     }
 
@@ -30,9 +32,9 @@ impl StateMachine {
             State::SourceExtraction => {
                 for i in 0..line.len() {
                     if line[i] == 9 {
-                        let mut first_path = Vec::new();
-                        first_path.push(i as u8);
-                        self.paths.insert(first_path);
+                        self.positions.insert(i as u8);
+                        self.tachyons = vec![0; line.len()];
+                        self.tachyons[i] = 1;
                         break;
                     }
                 }
@@ -40,23 +42,28 @@ impl StateMachine {
             }
 
             State::Refraction => {
-                let mut next_paths : HashSet<Vec<u8>> = HashSet::new();
+                let mut next_positions : HashSet<u8> = HashSet::new();
+                let mut next_tachyons : Vec<u64> = vec![0; self.tachyons.len()];
 
-                for path in self.paths.clone() {
-                    if line[path[path.len()-1] as usize] == 1 {
-                        let mut new_path_low = path.clone();
-                        new_path_low.push(path[path.len() - 1] - 1);
-                        next_paths.insert(new_path_low);
+                for beam in self.positions.clone() {
+                    let position = beam as usize;
 
-                        let mut new_path_high = path.clone();
-                        new_path_high.push(path[path.len() - 1] + 1);
-                        next_paths.insert(new_path_high);
+                    if line[position] == 1 {
+                        // Update positions to check
+                        next_positions.insert(beam-1);
+                        next_positions.insert(beam+1);
+                        
+                        // Update path vector
+                        next_tachyons[position-1] += self.tachyons[position];
+                        next_tachyons[position+1] += self.tachyons[position];
                     }
                     else {
-                        next_paths.insert(path.clone());
+                        next_positions.insert(beam);
+                        next_tachyons[position] += self.tachyons[position];
                     }
                 }
-                self.paths = next_paths;
+                self.positions = next_positions;
+                self.tachyons = next_tachyons;
             }
         }
     }
@@ -94,7 +101,7 @@ fn main() -> io::Result<()> {
         }
     }
 
-    println!("Result: {}", refractor.paths.len());    // 
+    println!("Result: {}", refractor.tachyons.iter().fold(0, |acc, &x| acc + x));    // 
 
     Ok(())
 }
