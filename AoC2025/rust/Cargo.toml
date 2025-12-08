@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+petgraph = "0.8.3"
 
 [[bin]]
 name = "puzzle1"
@@ -60,3 +61,11 @@ path = "src/Puzzle13.rs"
 [[bin]]
 name = "puzzle14"
 path = "src/Puzzle14.rs"
+
+[[bin]]
+name = "puzzle15"
+path = "src/Puzzle15.rs"
+
+[[bin]]
+name = "puzzle16"
+path = "src/Puzzle16.rs"
